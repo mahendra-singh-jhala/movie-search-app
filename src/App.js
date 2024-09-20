@@ -1,5 +1,5 @@
 import './App.css';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom"
 import SearchBar from './component/SearchBar';
 import FilterDropdown from './component/FilterDropdown';
@@ -17,25 +17,26 @@ function App() {
     const moviesPerPage = 8; // defines how many movies to display per page
 
     // using handleSearch function fetch movie data and update the movies state
-    const handleSearch = async (searchTerm) => {
+    // usecallback handleSearch to avoid unnecessary re-renders
+    const handleSearch = useCallback(async (searchTerm) => {
         try {
             const data = await SearchMovie(searchTerm, filter);
-            setMovies(data.Search || [])
+            setMovies(data.Search || []);
         } catch (error) {
             setError(error.message);
         } finally {
-            setLoading(false)
+            setLoading(false);
         }
-    }
+    }, [filter]); // Add filter as a dependency if it affects search results
 
-    // load default movies by calling handleSearch
+    // Load default movies by calling handleSearch
     useEffect(() => {
         const loadDefaultMovies = async () => {
-            await handleSearch("movies")
+            await handleSearch("movies");
         };
 
         loadDefaultMovies();
-    }, []);
+    }, [handleSearch]); // Added handleSearch to the dependency array
 
     // filter the movies 
     const handleFilterChange = (filter) => {
