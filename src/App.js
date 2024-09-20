@@ -11,6 +11,7 @@ import { SearchMovie } from "./api"
 function App() {
     const [movies, setMovies] = useState([]); // store the movies fetched from the API
     const [error, setError] = useState(null); // error messages during API
+    const [loading, setLoading] = useState(true) // if data is still being loaded
     const [filter, setFilter] = useState(''); // filter applied to the movie list
     const [currentPage, setCurrentPage] = useState(1); // current page of movies being displayed 
     const moviesPerPage = 8; // defines how many movies to display per page
@@ -22,6 +23,8 @@ function App() {
             setMovies(data.Search || [])
         } catch (error) {
             setError(error.message);
+        } finally {
+            setLoading(false)
         }
     }
 
@@ -58,6 +61,14 @@ function App() {
         paginationNumbers.push(i);
     }
 
+    // condition if data loading
+    if (loading)
+        return <h1 className='text-4xl text-white font-bold text-center p-4'>Data is loading please wait.........................</h1>
+
+    // condition if error
+    if (error)
+        return <h1 className='text-2xl font-bold text-red-700'>Error: {error}</h1>;
+
     return (
         <Router>
             <header className="sticky top-0 bg-gray-400 text-white items-center flex flex-wrap gap-5 justify-between p-5 mb-10 z-50">
@@ -81,7 +92,7 @@ function App() {
                                         <button
                                             key={pageNumber}
                                             onClick={() => handlePagination(pageNumber)}
-                                            className={`py-2 px-3 rounded my-4 mx-2 ${currentPage === pageNumber? 'bg-blue-500' : 'bg-gray-500'}`}
+                                            className={`py-2 px-3 rounded my-4 mx-2 ${currentPage === pageNumber ? 'bg-blue-500' : 'bg-gray-500'}`}
                                         >
                                             {pageNumber}
                                         </button>
