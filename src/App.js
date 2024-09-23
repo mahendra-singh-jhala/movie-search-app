@@ -1,11 +1,13 @@
 import './App.css';
 import { useState, useEffect, useCallback } from 'react';
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom"
+import { Link } from 'react-router-dom';
 import SearchBar from './component/SearchBar';
 import FilterDropdown from './component/FilterDropdown';
 import MovieList from './component/MovieList';
 import MovieDetail from './component/MovieDetail';
 import { SearchMovie } from "./api"
+import Favourite from './component/Favourite';
 
 
 function App() {
@@ -13,6 +15,7 @@ function App() {
     const [error, setError] = useState(null); // error messages during API
     const [loading, setLoading] = useState(true) // if data is still being loaded
     const [filter, setFilter] = useState(''); // filter applied to the movie list
+    const [favourite, setFavourite] = useState([]); // State for favorite movies
     const [currentPage, setCurrentPage] = useState(1); // current page of movies being displayed 
     const moviesPerPage = 8; // defines how many movies to display per page
 
@@ -62,6 +65,22 @@ function App() {
         paginationNumbers.push(i);
     }
 
+
+    const addToFavourite = (movies) => {
+        if (favourite.find(fav => fav.imdbID === movies.imdbID)) {
+            alert("Movie already added to the Favourite");
+            return;
+        }
+        else {
+            setFavourite([...favourite, movies])
+        }
+    }
+
+    // To remove the product in Favourite
+    const removeFromFavourite = (movieimdbID) => {
+        setFavourite(favourite.filter(fav => fav.imdbID !== movieimdbID))
+    }
+
     // condition if data loading
     if (loading)
         return <h1 className='text-4xl text-white font-bold text-center p-4'>Data is loading please wait.........................</h1>
@@ -74,9 +93,15 @@ function App() {
         <Router>
             <header className="sticky top-0 bg-gray-400 text-white items-center flex flex-wrap gap-5 justify-between p-5 mb-10 z-50">
                 <h1 className="text-4xl font-extrabold">Movies</h1>
+                <SearchBar onSearch={handleSearch} />
                 <div className="flex flex-wrap gap-5 justify-between">
-                    <SearchBar onSearch={handleSearch} />
                     <FilterDropdown onFilterChange={handleFilterChange} />
+                    {/* Add Favourite Link */}
+                    <Link to="/favourite" className="text-white">
+                        <button className="text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br font-medium rounded-md text-center text-xl px-4 py-2 ms-2">
+                            Favourite
+                        </button>
+                    </Link>
                 </div>
             </header>
 
@@ -102,7 +127,8 @@ function App() {
                             </>
 
                         } />
-                        <Route path='/movie/:id' element={<MovieDetail />} />
+                        <Route path='/favourite' element={<Favourite favourite={favourite} removeFromFavourite={removeFromFavourite}/>} />
+                        <Route path='/movie/:id' element={<MovieDetail favourite={favourite} addToFavourite={addToFavourite} />} />
                     </Routes>
                 </div>
             </main>
