@@ -66,13 +66,13 @@ function App() {
     }
 
 
-    const addToFavourite = (movies) => {
-        if (favourite.find(fav => fav.imdbID === movies.imdbID)) {
+    const addToFavourite = (movie) => {
+        if (favourite.find(fav => fav.imdbID === movie.imdbID)) {
             alert("Movie already added to the Favourite");
             return;
         }
         else {
-            setFavourite([...favourite, movies])
+            setFavourite([...favourite, movie])
         }
     }
 

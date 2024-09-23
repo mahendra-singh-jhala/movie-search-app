@@ -5,7 +5,7 @@ const Favourite = ({ favourite, removeFromFavourite }) => {
                 {favourite.length === 0 ? (
                     <p className="text-xl uppercase">No movies in favourite</p>
                 ) : (
-                    <div>
+                    <div className="flex flex-wrap gap-10">
                         {favourite.map(movie => (
                             <div className="mb-8 w-80 text-center transform transition duration-500 hover:scale-90 rounded-md overflow-hidden" key={movie.imdbID}>
                                 <img src={movie.Poster} alt={movie.Title} className="w-full h-96" />
@@ -23,8 +23,6 @@ const Favourite = ({ favourite, removeFromFavourite }) => {
             </div>
         </>
     )
-
-
 }
 
 export default Favourite
